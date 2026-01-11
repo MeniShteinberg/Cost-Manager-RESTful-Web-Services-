@@ -1,5 +1,6 @@
 mongoUri=enter here the link you got from your project manager ;)
+
 portUsers=
 portCosts=
 portLogs=
-portErrors=
+portAdmin=
