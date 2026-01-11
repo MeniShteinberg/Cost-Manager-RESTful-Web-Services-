@@ -27,9 +27,6 @@ const costs = new mongoose.Schema({
 const logs = new mongoose.Schema({
  // I don't know what logs is supposed to contain.
 });
-
-
-
 const user = mongoose.model('user',useres);
 
 //test add new user and save to DB
