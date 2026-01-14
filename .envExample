@@ -1,6 +1,5 @@
-mongoUri=enter here the link you got from your project manager ;)
-
+mongoUri=
 portUsers=
-portCosts=
+portCosts=3000
 portLogs=
 portAdmin=
