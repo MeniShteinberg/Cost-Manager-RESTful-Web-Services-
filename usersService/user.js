@@ -5,7 +5,12 @@ const apiRouter = require('./routes/api')
 
 const app = express();
 
+mongoose.connect(process.env.mongoUri)
+    .then(() => console.log("Connected to MongoDB Atlas!"))
+    .catch(err => console.error("Error connecting:", err));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const User = require('./models/usersDB');
 
