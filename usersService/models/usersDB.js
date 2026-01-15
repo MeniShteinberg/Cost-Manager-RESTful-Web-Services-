@@ -1,6 +1,5 @@
 // put here all files that work with monogoDB// 
 const mongoose = require('mongoose');
-const path = require('path');
 
 // Schema definition based on requirements
 const usersSchema = new mongoose.Schema({
