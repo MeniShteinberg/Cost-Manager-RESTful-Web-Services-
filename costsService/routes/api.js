@@ -16,7 +16,7 @@ router.post('/add', function(req, res, next) {
     if (createdAt < today) {
         return res.status(400).send({ 
             id: 4, 
-            message: 'Adding costs with past dates is not allowed.' 
+            message: 'Adding costs with past dates is not allowed.'
         });
     }
 
@@ -34,7 +34,12 @@ router.post('/add', function(req, res, next) {
             // 4. אם המשתמש קיים, ממשיכים להוספת העלות
             return cost.create(req.body)
                 .then(function(costItem) {
-                    res.status(201).send(costItem);
+                    const result = costItem.toObject();
+
+                    delete result._id;
+                    delete result.__v;
+
+                    res.status(201).send(result);
                 });
         })
         .catch(function(error) {
@@ -51,8 +56,17 @@ router.get('/report', function(req, res) {
     const year = req.query.year;
     const month = req.query.month;
 
+    user.findOne({ id: userid })
+        .then(function(userExists) {
+            if (!userExists) {
+                return res.status(404).send({ 
+                    id: 3, 
+                    message: 'User ID ' + userid + ' does not exist. Cannot generate report.' 
+                });
+            }
+
     // 1. חיפוש בטבלת הדוחות (Computed Pattern) - האם כבר חישבנו את הדוח הזה בעבר?
-    report.findOne({ userid: userid, year: year, month: month })
+    return report.findOne({ userid: userid, year: year, month: month })
         .then(function(existingReport) {
             if (existingReport) {
                 // אם נמצא דוח מוכן, מחזירים אותו מיד בלי לחשב
@@ -108,6 +122,7 @@ router.get('/report', function(req, res) {
 
                 res.status(200).send(finalReport);
             });
+        });
         })
         .catch(function(error) {
             // החזרת שגיאה במבנה הנדרש
