@@ -12,7 +12,7 @@ mongoose.connect(process.env.mongoUri)
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const User = require('./models/usersDB');
+const User = require('./models/usersDb');
 
 //router for all /api pathes//
 app.use('/api', apiRouter);
