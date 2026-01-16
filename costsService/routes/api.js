@@ -9,8 +9,8 @@ router.post('/add', function(req, res, next) {
         })
         .catch(function(error) {
             res.status(500).send({ 
-                error: 'Problem adding cost item', 
-                details: error.message 
+                id: 1, 
+                message: 'Problem adding cost item: ' + error.message
             });
         });
 });
