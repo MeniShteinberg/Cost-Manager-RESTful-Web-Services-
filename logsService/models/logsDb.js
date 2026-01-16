@@ -1,9 +1,8 @@
-require('dotenv').config();
 const mongoose = require('mongoose');
 
-const uri = process.env.mongoUri;
+// Schema definition based on requirements
 
-  const logs = new mongoose.Schema({
+  const logSchema = new mongoose.Schema({
       level: {
         type: String,
         required: true
@@ -16,7 +15,9 @@ const uri = process.env.mongoUri;
         type: Date,
         default: Date.now
   },
-
-  details: Object
   
+  details: Object
+
 });
+
+module.exports = mongoose.model('logs',logSchema);
