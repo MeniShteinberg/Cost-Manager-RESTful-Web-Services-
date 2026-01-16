@@ -1,5 +1,10 @@
 mongoUri=
+<<<<<<< HEAD
 portCosts=
 portUsers=
+=======
+portUsers=3001
+portCosts=3000
+>>>>>>> a65d1c336d66b057795d58c253f7f55848bdc516
 portLogs=
 portAdmin=
