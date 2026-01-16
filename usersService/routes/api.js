@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/usersDB');
+const User = require('../models/usersDb');
 
 // POST /api/add - Adding a new user
 router.post('/add', function (req, res, next) {

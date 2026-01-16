@@ -1,8 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-
 const apiRouter = require('./routes/api');
+
+const {logAndSaveToDb} = require('../logsService/logs')
 
 const app = express();
 
@@ -12,21 +13,27 @@ mongoose.Promise = global.Promise;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/api', apiRouter);
+app.use(requestLogger);
 
+app.use('/api', apiRouter); 
+
+// את כל הבלוק הזה לא חיברתי ללוגים פשוט כי זה דופק את כל הלוגיקה 
 app.use(function(req, res, next) {
   const err = new Error('Not Found');
   err.status = 404;
-  next(err);
+
 });
 
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.json({
-    id: 999,
+    id: 1,
     message: err.message
   });
 });
+// צריך לראות מה עושים פה אני התייאשתי
+
+router.use(errorLogger)
 
 const port = process.env.portCosts || 3000;
 app.listen(port, () => {
