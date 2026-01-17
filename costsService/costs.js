@@ -6,7 +6,6 @@ const {logAndSaveToDb,requestLogger,errorLogger} = require('../logsService/logs'
 const app = express();
 
 mongoose.connect(process.env.mongoUri);
-mongoose.Promise = global.Promise;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

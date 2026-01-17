@@ -82,7 +82,6 @@ router.get('/report', function(req,res,next) {
             if (existingReport) {  // אם נמצא דוח מוכן, מחזירים אותו מיד בלי לחשב
                
                 //endpoint is accessed Successfully log
-                //****might need to add other things than userid to log*****
                 logAndSaveToDb('info','Endpoint Accessed: Monthly Report returnd', {userid});
 
                 //success 200 message
@@ -133,12 +132,10 @@ router.get('/report', function(req,res,next) {
                 const isPastMonth = (year < now.getFullYear()) || (year == now.getFullYear() && month < (now.getMonth() + 1));
                 
                 if (isPastMonth) {
-                    report.create(finalReport).catch(err => console.log("Save report error:", err));
-                    //****idk ask adi for explanation ****
+                    report.create(finalReport).catch(next(error));
+                    //didnt save the report to mongoDB 
                 }
 
-                //endpoint is accessed Successfully log
-                //****might need to add other things than userid to log*****
                 logAndSaveToDb('info','Endpoint Accessed: Monthly Report returnd', {userid});
                 //success 200 message
                 res.status(200).send(finalReport);
