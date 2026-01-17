@@ -64,6 +64,28 @@ router.get('/report', function(req,res,next) {
     const year = req.query.year;
     const month = req.query.month;
 
+    // בדיקה שחובה לשלוח את כל הפרמטרים: תעודת זהות, שנה וחודש
+    if (!userid || !year || !month) {
+        
+        logAndSaveToDb('error', 'Failed: Missing query parameters', { userid, year, month });
+
+        return res.status(400).send({
+            id: 4,
+            message: 'Missing required parameters: id, year, and month must be provided.'
+        });
+    }
+
+    // 2. בדיקה שהחודש הוא מספר תקין בין 1 ל-12
+    if (month < 1 || month > 12) {
+        
+        logAndSaveToDb('error', 'Failed: Invalid month parameter', { userid, year, month });
+
+        return res.status(400).send({
+            id: 4,
+            message: 'Month must be between 1 and 12.'
+        });
+    }
+
     user.findOne({ id: userid })
         .then(function(userExists) {
             if (!userExists) {
