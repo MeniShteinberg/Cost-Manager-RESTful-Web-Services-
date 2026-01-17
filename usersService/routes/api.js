@@ -26,31 +26,38 @@ router.get('/users', function (req, res, next) {
 });
 
 // GET /api/users/:id - Get details of a specific user
-router.get('/users/:id', function (req, res, next) {
-    const userId = req.params.id; // Extracts the ID from the URL
-    User.findOne({ id: userId }, '-_id -__v') // Finds one user by their numeric ID
-        .then(function (user) {
-            if (!user) {
-                return res.status(404).send({
-                    status: 404,
-                    message: "User not found"
-                });
-            }
+const Cost = require('../../costsService/models/costsDB'); // Import the Cost model
 
-            const totalCosts = 0;
+router.get('/users/:id', async function (req, res, next) {
+    const userId = parseInt(req.params.id); // Ensure ID is a number
 
-            // Placeholder for total calculation logic
-            // In the future, you will pull data from the costs service here
+    try {
+        // 1. Find the User
+        const user = await User.findOne({ id: userId });
+        if (!user) {
+            return res.status(404).send({ status: 404, message: "User not found" });
+        }
 
-            res.json({
-                first_name: user.first_name,
-                last_name: user.last_name,
-                id: user.id,
-                birthday: user.birthday,
-                total: totalCosts
-            });
-        })
-        .catch(next); // Passes any server errors to the error handler
+        // 2. Calculate the Total Cost using Aggregation
+        const costData = await Cost.aggregate([
+            { $match: { userid: userId } }, // Find all costs for this user
+            { $group: { _id: null, total: { $sum: "$sum" } } } // Sum the 'sum' fields
+        ]);
+
+        // 3. Extract the total (or 0 if no costs exist)
+        const totalAmount = costData.length > 0 ? costData[0].total : 0;
+
+        // 4. Send the final combined response
+        res.json({
+            first_name: user.first_name,
+            last_name: user.last_name,
+            id: user.id,
+            birthday: user.birthday,
+            total: totalAmount
+        });
+
+    } catch (error) {
+        next(error);
+    }
 });
-
 module.exports = router;
