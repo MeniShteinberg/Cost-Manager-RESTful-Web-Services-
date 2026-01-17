@@ -25,7 +25,6 @@ router.get('/users', function (req, res, next) {
         .catch(next);
 });
 
-// GET /api/users/:id - Get details of a specific user
 const Cost = require('../../costsService/models/costsDB'); // Import the Cost model
 
 router.get('/users/:id', async function (req, res, next) {
@@ -60,4 +59,5 @@ router.get('/users/:id', async function (req, res, next) {
         next(error);
     }
 });
+
 module.exports = router;
