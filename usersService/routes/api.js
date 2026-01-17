@@ -35,7 +35,7 @@ router.get('/users', function (req, res, next) {
         .catch(next);// Passes any server errors to the error logger.
 });
 
-const Cost = require('../../costsService/models/costsDB'); // Import the Cost model
+const Cost = require('../../costsService/models/costsDb'); // Import the Cost model
 
 // GET /api/users/:id - returns a specific user
 router.get('/users/:id', async function (req, res, next) {
