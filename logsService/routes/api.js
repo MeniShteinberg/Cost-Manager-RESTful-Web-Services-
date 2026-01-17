@@ -2,12 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const { logAndSaveToDb } = require('../../logsService/logs')
-const cost = require('../models/logsDb');
+const log = require('../models/logsDb');
 
 router.get('/logs', async function(req,res,next) {
     try {
         //find all logs in the DB and insert them to alllogs
-        const allLogs = await Log.find({});
+        const allLogs = await log.find({});
 
         //endpoint is accessed Successfully log
         await logAndSaveToDb('info','Logs list retrieved successfully');
