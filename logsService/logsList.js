@@ -46,7 +46,7 @@ app.use(async function(err, req, res, next) {
 //this will catch all next(error) log save to DB and print error 500 
 app.use(errorLogger)
 
-const port = process.env.portCosts || 3002;
+const port = process.env.portLogsList || 3002;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
