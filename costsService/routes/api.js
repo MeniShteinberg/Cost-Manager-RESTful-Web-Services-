@@ -6,8 +6,6 @@ const { logAndSaveToDb,requestLogger,errorLogger} = require('../../logsService/l
 // ייבוא המודל של המשתמשים כדי לבדוק קיום משתמש במסד הנתונים
 const user = require('../../usersService/models/usersDb');
 
-//get log for each http request and save it to DB. 
-router.use(requestLogger);
 
 //adding cost item endpoint
 router.post('/add', function(req, res, next) {
@@ -151,8 +149,5 @@ router.get('/report', function(req,res,next) {
             next(error);//will go to the errorlogger func that logs and prints the error message 500
         });
 });
-
-//this will catch all next(error) log save to DB and print error 500  
-router.use(errorLogger)
 
 module.exports = router;
