@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const cost = require('../models/costsDb');
 const report = require('../models/reportsDb');
-const { logAndSaveToDb,requestLogger,errorLogger} = require('../../logsService/logs')
+const { logAndSaveToDb } = require('../../logsService/logs')
 // ייבוא המודל של המשתמשים כדי לבדוק קיום משתמש במסד הנתונים
 const user = require('../../usersService/models/usersDb');
 
