@@ -1,39 +1,42 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const apiRouter = require('./routes/api')
-
+const apiRouter = require('./routes/api');
+const {logAndSaveToDb,requestLogger,errorLogger} = require('../logsService/logs');
 const app = express();
 
 mongoose.connect(process.env.mongoUri)
-    .then(() => console.log("Connected to MongoDB Atlas!"))
-    .catch(err => console.error("Error connecting:", err));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const User = require('./models/usersDb');
+//get log for each http request and save it to DB
+app.use(requestLogger);
 
-//router for all /api pathes//
 app.use('/api', apiRouter);
 
-//Error Handling
-
-//404 Error-not found
-app.use(function (req, res, next) {
-    const error = new Error('Not Found');
-    error.status = 404;
-    next(error);
+app.use(async function(err, req, res, next) {
+  const status = err.status || 500;
+  if(status===404)
+  {
+     await logAndSaveToDb('error','Failed:The requested path does not exist ', {
+      path:req.url,
+      message:err.message
+     });
+      //error 404 not fund message
+      return res.status(404).send({
+      id: 3,
+      message: 'The requested path ' + req.url + ' does not exist.'
+   });
+  }
+  else
+  {
+    next(err);
+  }
 });
 
-//General Error
-app.use(function (error, req, res, next) {
-    res.status(error.status || 500);//internal server error
-    res.json({
-        status: error.status || 500,
-        message: error.message
-    });
-});
+//this will catch all next(error) log save to DB and print error 500 
+app.use(errorLogger)
 
 const PORT = process.env.portUsers || 3001;
 app.listen(PORT, () => {
@@ -41,11 +44,3 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
-/* used for log
-// Middleware for logging every request
-app.use((req, res, next) => {
-    logger.info({ method: req.method, url: req.url }, 'HTTP Request received');
-    // Log to database logic should be implemented here or via a Pino transport
-    next();
-});
-*/

@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const apiRouter = require('./routes/api');
-const {logAndSaveToDb,requestLogger,errorLogger} = require('../logsService/logs')
+const {logAndSaveToDb,requestLogger,errorLogger} = require('../logsService/logs');
 const app = express();
 
 mongoose.connect(process.env.mongoUri);
@@ -45,7 +45,7 @@ app.use(async function(err, req, res, next) {
 //this will catch all next(error) log save to DB and print error 500 
 app.use(errorLogger)
 
-const port = process.env.portCosts || 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
