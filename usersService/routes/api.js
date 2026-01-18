@@ -46,13 +46,8 @@ router.post('/add', function (req, res, next) {
                     });
                 }
             }
-
             // General fallback for other unexpected errors
-            logAndSaveToDb('error', 'Failed to add user: Internal Server Error', { details: error.message });
-            return res.status(500).send({
-                id: 1,
-                message: 'An unexpected error occurred.'
-            });
+            next(error);
         });
 });
 
