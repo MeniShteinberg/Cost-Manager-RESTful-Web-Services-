@@ -11,18 +11,47 @@ const { logAndSaveToDb } = require('../../logsService/logs')
 router.post('/add', function (req, res, next) {
     User.create(req.body)
         .then(function (newUser) {
-            //Endpoint is accessed Successfully log that a user has been added 
-            logAndSaveToDb('info', 'Endpoint Accessed:user added', {});
-            //Returns status 201(succecefully created a new resource)and a new user as been creats
+            // Log successful access to the database
+            logAndSaveToDb('info', 'Endpoint Accessed: user added', {});
             res.status(201).send(newUser);
         })
         .catch(function (error) {
-            //Error log that there was a failure adding the new user
-            logAndSaveToDb('error', ' Failed: adding user', {});
-            //Error 400 Bad Request message
-            return res.status(400).send({
-                id: 4,
-                message: 'faild adding user.'
+            // Check for Duplicate ID (Mongo Error Code 11000)
+            if (error.code === 11000) {
+                logAndSaveToDb('error', 'Failed to add new user: Duplicate User ID', { id: req.body.id });
+                return res.status(400).send({
+                    id: 4,
+                    message: `User already exists. The ID ${req.body.id} is already taken.`
+                });
+            }
+
+            // Check for Missing Parameters or Validation Errors
+            if (error.name === 'ValidationError') {
+                // Determine if the error is specifically about the birthday validator
+                const isFutureDate = error.errors.birthday && error.errors.birthday.kind === 'user defined';
+
+                if (isFutureDate) {
+                    //Check for Future Date
+                    logAndSaveToDb('error', 'Failed to add user: Birthday is in the future', { birthday: req.body.birthday });
+                    return res.status(400).send({
+                        id: 4,
+                        message: 'Invalid birthday. The date must be in the past.'
+                    });
+                } else {
+                    // Missing Parameters (first_name, last_name,ID)
+                    logAndSaveToDb('error', 'Failed to add user: Missing required parameters', { details: error.message });
+                    return res.status(400).send({
+                        id: 4,
+                        message: 'Missing parameters. Please ensure all required fields are filled.'
+                    });
+                }
+            }
+
+            // General fallback for other unexpected errors
+            logAndSaveToDb('error', 'Failed to add user: Internal Server Error', { details: error.message });
+            return res.status(500).send({
+                id: 1,
+                message: 'An unexpected error occurred.'
             });
         });
 });
