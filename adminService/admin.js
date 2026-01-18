@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 //Importing the custom route handlers from the routes/api.js file
 const apiRouter = require('./routes/api');
 
-//Importing the logAndSaveToDb,requestLogger,errorLogger functions from the logs file
+//Importing the logging functions from the logs service
 const {logAndSaveToDb,requestLogger,errorLogger} = require('../logsService/logs');
 
 //Initializes a new Express application instance
@@ -35,15 +35,20 @@ app.use(function(req, res, next) {
 
 });
 
+//Handle 404 errors
 app.use(async function(err, req, res, next) {
+
+  //Determine the error status or default to 500
   const status = err.status || 500;
+  
   if(status===404)
   {
-     await logAndSaveToDb('error','Failed:The requested path does not exist ', {
+      //Log error details to database before responding
+      await logAndSaveToDb('error','Failed:The requested path does not exist ', {
       path:req.url,
       message:err.message
      });
-      //error 404 not fund message
+      //error 404 not found message
       return res.status(404).send({
       id: 3,
       message: 'The requested path ' + req.url + ' does not exist.'
@@ -51,19 +56,20 @@ app.use(async function(err, req, res, next) {
   }
   else
   {
+    //Pass non-404 errors to the subsequent error handler
     next(err);
   }
 });
 
-//Catches all errors passed through next(err) from your routes 
+//Catches all remaining errors passed through next(err) from your routes 
 app.use(errorLogger)
 
-// Use the 'PORT' from .env if available, otherwise default to 3003
+//Use the 'PORT' from .env if available, otherwise default to 3003
 const port = process.env.PORT || 3003;
 
-// Start the server
+//Start the server
 app.listen(port, () => {
-  // Log a message to the terminal so we know the service is successfully running
+  //Log a message to the terminal so we know the service is successfully running
     console.log(`Server is running on port ${port}`);
 });
 
