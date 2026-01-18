@@ -38,7 +38,7 @@ app.use(async function(err, req, res, next) {
 //this will catch all next(error) log save to DB and print error 500 
 app.use(errorLogger)
 
-const PORT = process.env.portUsers || 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`User Microservice is running on port ${PORT}`);
 });
