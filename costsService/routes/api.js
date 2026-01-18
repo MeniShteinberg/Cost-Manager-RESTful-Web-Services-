@@ -165,8 +165,10 @@ router.get('/report', function(req,res,next) {
                 const isPastMonth = (year < now.getFullYear()) || (year == now.getFullYear() && month < (now.getMonth() + 1));
                 
                 if (isPastMonth) {
-                    report.create(finalReport).catch(next(error));
-                    //didnt save the report to mongoDB 
+                    report.create(finalReport)
+                        .catch(function(saveError) {
+                             logAndSaveToDb('error', 'Failed to save computed report to DB', saveError);
+                        });
                 }
 
                 logAndSaveToDb('info','Endpoint Accessed: Monthly Report returnd', {userid});
