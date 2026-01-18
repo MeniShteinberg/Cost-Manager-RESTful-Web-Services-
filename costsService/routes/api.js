@@ -10,6 +10,7 @@ const user = require('../../usersService/models/usersDb');
 //adding cost item endpoint
 router.post('/add', function(req, res, next) {
     const userid = req.body.userid; // 1. חילוץ ה-ID
+    const sum = req.body.sum;
     const createdAt = req.body.created_at ? new Date(req.body.created_at) : new Date();
 
     // 1. בדיקה: האם התאריך שייך לעבר?
@@ -23,6 +24,16 @@ router.post('/add', function(req, res, next) {
         return res.status(400).send({
         id: 4, 
         message: 'Adding costs with past dates is not allowed.'
+        });
+    }
+
+    if (sum <= 0) {
+        // error log
+        logAndSaveToDb('error', 'Failed: Invalid sum', { userid, sum });
+        // error 400 Bad Request message
+        return res.status(400).send({
+            id: 4, 
+            message: 'Sum must be a positive number.'
         });
     }
 
