@@ -1,4 +1,4 @@
-//Loads environment variables from your .env file into process.env
+//Loads environment variables from your .env file
 require('dotenv').config();
 
 //Importing the express framework
