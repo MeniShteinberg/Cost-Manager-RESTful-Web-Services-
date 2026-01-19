@@ -13,7 +13,10 @@ router.post('/add', function (req, res, next) {
         .then(function (newUser) {
             // Log successful access to the database
             logAndSaveToDb('info', 'Endpoint Accessed: user added', {});
-            res.status(201).send(newUser);
+            const newUserResponse = newUser.toObject();
+            delete newUserResponse.__v;
+            delete newUserResponse._id;
+            res.status(201).send(newUserResponse);
         })
         .catch(function (error) {
             // Check for Duplicate ID (Mongo Error Code 11000)
