@@ -1,6 +1,6 @@
 const express = require('express');
 
-//Create a new router instance for API endpoints
+//Initialize express router
 const router = express.Router();
 
 //Import the logging functions from the logs service
