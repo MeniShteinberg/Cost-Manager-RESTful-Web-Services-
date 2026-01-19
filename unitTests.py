@@ -25,7 +25,7 @@ sys.stdout = output
 print("a=" + a)
 print("b=" + b)
 print("c=" + c)
-print("d=" + a) 
+print("d=" + d)
 print()
 
 
