@@ -1,9 +1,15 @@
-//put here the loglist api 
 const express = require('express');
+
+//Initialize express router
 const router = express.Router();
-const { logAndSaveToDb } = require('../../logsService/logs')
+
+//Import logs database model
 const log = require('../models/logsDb');
 
+//Import the logging functions from the logs service
+const { logAndSaveToDb } = require('../../logsService/logs')
+
+//Handle GET requests to show all logs
 router.get('/logs', async function(req,res,next) {
     try {
         //find all logs in the DB and insert them to alllogs
@@ -11,12 +17,13 @@ router.get('/logs', async function(req,res,next) {
 
         //endpoint is accessed Successfully log
         await logAndSaveToDb('info','Logs list retrieved successfully');
-        //success 200 message
+        //Return the logs as JSON and success 200 message and 
         res.status(200).json(allLogs);
 
     } catch (error){
-        next(error);//will go to the errorlogger func that logs and prints the error message 500
+        next(error);//Forward unexpected errors to the error handler
         }
 });
 
+//Export the router to be mounted in the main application
 module.exports = router;

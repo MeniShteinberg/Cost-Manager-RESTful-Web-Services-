@@ -1,10 +1,19 @@
-const pino = require('pino')(); 
-const logger =pino; 
-const log = require('./models/logsDb'); //monogoDB schema logs 
+//Importing the pino library 
+const pino = require('pino')();
 
+//Creating a new object from the pino library 
+const logger =pino; 
+
+//Import logs database model
+const log = require('./models/logsDb'); 
+
+//the main function that uses pino to create a log and saves it to the data base 
 const logAndSaveToDb = async (level,message,details = {}) => {
-  logger[level](details, message); //pino prints the log to console  
-// try to save the log from pino to mongoDB using the logsSchema
+  
+  //pino creates the log 
+  logger[level](details, message);  
+
+// try to save the log from pino to mongoDB using the log model 
   try {
     await log.create({
       level: level,
@@ -12,7 +21,7 @@ const logAndSaveToDb = async (level,message,details = {}) => {
       details: details
       //timestemp is set by default to Date.now  
     });
-  } catch (err) { //if the save to monogoDB faild
+  } catch (err) { //if the save to monogoDB faild prints pino log to console
     logger.error('failed to save log to mongoDB', err);
   }
 };
@@ -30,21 +39,22 @@ const requestLogger = async (req, res, next) => {
 
 //Middleware for logging Errors 
 const errorLogger = async (err, req, res, next) => {
-  await logAndSaveToDb('error', `Unexpected Error: ${err.message}`, {  //print the log and save it
+  await logAndSaveToDb('error', `Unexpected Error: ${err.message}`, {  
     stack: err.stack,
     url: req.url
   });
 
-  //check if alrady sent arespone to clinet 
+  //check if already sent arespone to client
   if (res.headersSent) {
     return next(err);
   }
 
-  //the problem is with the server          
+  //else the problem is with the server,         
   res.status(500).send({ 
     id: 1, 
     message: 'An Internal Server Error (500): ' + err.message 
   });
 };
 
+//Exporting registry functions and middleware for use elsewhere 
 module.exports = { logAndSaveToDb,requestLogger,errorLogger,logger };
