@@ -3,13 +3,13 @@ const express = require('express');
 //Create a new router object
 const router = express.Router();
 //Imports the user DB file from inside the model folder 
-const User = require('../models/usersDb');
+const user = require('../models/usersDb');
 //Importing the logAndSaveToDb function from the logs file
 const { logAndSaveToDb } = require('../../logsService/logs')
 
 // POST /api/add - Adding a new user
 router.post('/add', function (req, res, next) {
-    User.create(req.body)
+    user.create(req.body)
         .then(function (newUser) {
             // Log successful access to the database
             logAndSaveToDb('info', 'Endpoint Accessed: user added', {});
@@ -24,7 +24,7 @@ router.post('/add', function (req, res, next) {
                 logAndSaveToDb('error', 'Failed to add new user: Duplicate User ID', { id: req.body.id });
                 return res.status(400).send({
                     id: 4,
-                    message: `User already exists. The ID ${req.body.id} is already taken.`
+                    message: `user already exists. The ID ${req.body.id} is already taken.`
                 });
             }
 
@@ -56,7 +56,7 @@ router.post('/add', function (req, res, next) {
 
 // GET /api/users - List of users
 router.get('/users', function (req, res, next) {
-    User.find({}, '-_id -__v')
+    user.find({}, '-_id -__v')
         .then(function (users) {
             //Endpoint is accessed Successfully log 
             logAndSaveToDb('info', 'Endpoint Accessed: got The list of users', {});
@@ -65,30 +65,33 @@ router.get('/users', function (req, res, next) {
         })
         .catch(next);// Passes any server errors to the error logger.
 });
-
-const Cost = require('../../costsService/models/costsDb'); // Import the Cost model
+// Import the Cost model
+const cost = require('../../costsService/models/costsDb');
 
 // GET /api/users/:id - returns a specific user
 router.get('/users/:id', async function (req, res, next) {
-    const userId = parseInt(req.params.id); // Ensure ID is a number
+    // Ensure ID is a number
+    const userId = parseInt(req.params.id);
 
     try {
         //Find the User inside the database
-        const user = await User.findOne({ id: userId });
+        const user = await user.findOne({ id: userId });
         if (!user) {
             //error log that the user was not found
-            logAndSaveToDb('error', 'Failed: User not found', { id });
+            logAndSaveToDb('error', 'Failed: user not found', { id });
             //error 404 not fund message
             return res.status(404).send({
                 id: 3,
-                message: 'User ' + id + 'not found.'
+                message: 'user ' + id + 'not found.'
             });
         }
 
-        //Calculate the Total Cost using Aggregation
-        const costData = await Cost.aggregate([
-            { $match: { userid: userId } }, // Find all costs for this user
-            { $group: { _id: null, total: { $sum: "$sum" } } } // Sum the 'sum' fields
+        //Calculate the Total cost using Aggregation
+        const costData = await cost.aggregate([
+            // Find all costs for this user
+            { $match: { userid: userId } },
+            // Sum the 'sum' fields
+            { $group: { _id: null, total: { $sum: "$sum" } } }
         ]);
 
         //Extract the total (or 0 if no costs exist)
@@ -106,7 +109,8 @@ router.get('/users/:id', async function (req, res, next) {
             total: totalAmount
         });
 
-    } catch (error) {
+    }// General fallback for other unexpected errors
+    catch (error) {
         next(error);
     }
 });
