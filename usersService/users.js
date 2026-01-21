@@ -34,7 +34,8 @@ app.use(async function (err, req, res, next) {
     });
 
     return res.status(404).send({
-      id: 3, // Custom internal error ID for tracking
+      // Custom internal error ID for tracking
+      id: 3,
       message: 'The requested path ' + req.url + ' does not exist.'
     });
   }
