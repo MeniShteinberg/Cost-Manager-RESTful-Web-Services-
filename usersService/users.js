@@ -49,12 +49,12 @@ app.use(async function (err, req, res, next) {
 app.use(errorLogger);
 
 // Use the 'PORT' from .env if available, otherwise default to 3001 for the User Service
-const PORT = process.env.PORT || 3001;
+const port = process.env.PORT || 3001;
 
 // Start the server
-app.listen(PORT, () => {
+app.listen(port, () => {
   // Log a message to the terminal so we know the service is successfully running
-  console.log(`User Microservice is running on port ${PORT}`);
+  console.log(`User Microservice is running on port ${port}`);
 });
 
 module.exports = app;
