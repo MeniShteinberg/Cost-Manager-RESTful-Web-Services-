@@ -21,7 +21,8 @@ const logAndSaveToDb = async (level,message,details = {}) => {
       details: details
       //timestemp is set by default to Date.now  
     });
-  } catch (err) { //if the save to monogoDB faild prints pino log to console
+  } catch (err) { 
+    //if the save to monogoDB faild prints pino log to console
     logger.error('failed to save log to mongoDB', err);
   }
 };

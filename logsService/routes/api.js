@@ -21,7 +21,8 @@ router.get('/logs', async function(req,res,next) {
         res.status(200).json(allLogs);
 
     } catch (error){
-        next(error);//Forward unexpected errors to the error handler
+        //Forward unexpected errors to the error handler
+        next(error);
         }
 });
 
